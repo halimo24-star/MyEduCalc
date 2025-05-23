@@ -1,434 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MyEduCalc - by HALIM-R</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyEduCalc - Grade Calculator</title>
 
-  :root {
-    --color-primary: #007BFF;
-    --color-primary-light: #66B2FF;
-    --color-bg: #f9fbfd;
-    --color-text: #222;
-    --color-border: #ccc;
-    --color-success: #28a745;
-    --color-warning: #ffc107;
-    --color-danger: #dc3545;
-    --transition: 0.3s ease;
-  }
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  * {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: var(--color-bg);
-    color: var(--color-text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 10px 40px;
-  }
-
-  header {
-    width: 100%;
-    max-width: 900px;
-    padding: 20px 0;
-    text-align: center;
-    font-weight: 700;
-    font-size: 2.4rem;
-    color: var(--color-primary);
-    user-select: none;
-    position: relative;
-  }
-
-  header small {
-    display: block;
-    font-weight: 400;
-    font-size: 1rem;
-    color: #555;
-    margin-top: 6px;
-  }
-
-  /* Toggle Button */
-  #toggleTheme {
-    position: absolute;
-    right: 20px;
-    top: 25px;
-    background: var(--color-primary);
-    border: none;
-    padding: 6px 14px;
-    color: white;
-    font-weight: 600;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background var(--transition);
-    user-select: none;
-  }
-  #toggleTheme:hover {
-    background: var(--color-primary-light);
-  }
-
-  /* Table Styling */
-  table {
-    width: 100%;
-    max-width: 900px;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
-  }
-  thead {
-    background: var(--color-primary);
-    color: white;
-  }
-  th, td {
-    padding: 14px 10px;
-    text-align: center;
-    border-bottom: 1px solid var(--color-border);
-    font-weight: 500;
-  }
-  th {
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-  }
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  input[type=number] {
-    width: 80px;
-    padding: 8px 6px;
-    font-size: 1rem;
-    text-align: center;
-    border-radius: 6px;
-    border: 1.8px solid var(--color-border);
-    transition: border-color var(--transition);
-  }
-  input[type=number]:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
-
-  /* Calculate Button */
-  .btn-calc {
-    margin: 30px auto 0;
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 14px 40px;
-    font-size: 1.2rem;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: 700;
-    transition: background var(--transition), transform var(--transition);
-    display: block;
-    user-select: none;
-  }
-  .btn-calc:hover {
-    background: var(--color-primary-light);
-    transform: scale(1.05);
-  }
-
-  /* Modal styles */
-  .modal-bg {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.3);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1500;
-  }
-  .modal-bg.active {
-    display: flex;
-  }
-  .modal {
-    background: white;
-    max-width: 400px;
-    width: 90%;
-    padding: 30px 25px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgb(0 0 0 / 0.15);
-    text-align: center;
-  }
-  .modal h2 {
-    margin: 0 0 10px;
-    font-weight: 700;
-    color: var(--color-primary);
-    font-size: 1.8rem;
-  }
-  .modal p {
-    font-size: 1.15rem;
-    margin: 12px 0 20px;
-  }
-  .modal .result-box {
-    font-size: 2.3rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-  .modal .feedback {
-    font-size: 1.2rem;
-    font-style: italic;
-  }
-  .modal button.close-btn {
-    background: var(--color-primary);
-    border: none;
-    padding: 10px 30px;
-    color: white;
-    font-weight: 700;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    cursor: pointer;
-    user-select: none;
-    transition: background var(--transition);
-  }
-  .modal button.close-btn:hover {
-    background: var(--color-primary-light);
-  }
-
-  /* Footer */
-  footer {
-    margin-top: auto;
-    width: 100%;
-    max-width: 900px;
-    padding: 12px 10px;
-    text-align: center;
-    color: #555;
-    font-style: italic;
-    font-size: 0.9rem;
-    user-select: none;
-  }
-
-  /* Responsive */
-  @media (max-width: 520px) {
-    th, td {
-      font-size: 0.8rem;
-      padding: 10px 5px;
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
     }
-    input[type=number] {
-      width: 60px;
-      font-size: 0.9rem;
-      padding: 6px 4px;
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #d7eaff, #f0f9ff);
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 10px 40px;
     }
-    .btn-calc {
-      font-size: 1rem;
-      padding: 12px 28px;
+
+    header {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 2px solid #a7d7ff;
     }
-    .modal {
-      padding: 20px 15px;
-    }
-    .modal h2 {
-      font-size: 1.5rem;
-    }
-    .modal .result-box {
+    header .logo {
+      font-weight: 900;
       font-size: 1.8rem;
+      color: #007acc;
+      letter-spacing: 2px;
+      user-select: none;
     }
-  }
-</style>
+    header small {
+      font-size: 0.85rem;
+      color: #555;
+      user-select: none;
+    }
+
+    table {
+      width: 100%;
+      max-width: 900px;
+      border-collapse: collapse;
+      margin-top: 30px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #fff;
+    }
+    thead {
+      background: linear-gradient(90deg, #007acc, #00bfff);
+      color: white;
+    }
+    th, td {
+      padding: 15px 10px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    tbody tr:hover {
+      background-color: #e0f0ff;
+    }
+    tbody td input {
+      width: 70px;
+      padding: 7px;
+      font-size: 1rem;
+      border: 2px solid #007acc;
+      border-radius: 8px;
+      text-align: center;
+      transition: border-color 0.3s;
+      color: #007acc;
+      background: #e6f2ff;
+      outline: none;
+    }
+    tbody td input:focus {
+      border-color: #005f99;
+      background: #d0e7ff;
+    }
+    tbody td.final {
+      font-weight: 700;
+      color: #007acc;
+    }
+
+    .btn {
+      margin: 30px auto 10px;
+      padding: 15px 45px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(90deg, #007acc, #00bfff);
+      box-shadow: 0 6px 15px rgba(0, 123, 204, 0.5);
+      transition: all 0.3s ease;
+      user-select: none;
+      display: block;
+      max-width: 900px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .btn:hover {
+      background: linear-gradient(90deg, #005f99, #0099ff);
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 123, 204, 0.7);
+    }
+
+    /* Modal styles */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      z-index: 1000;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      max-width: 400px;
+      width: 100%;
+      padding: 25px 30px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      color: #007acc;
+      user-select: none;
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+    .modal-content p {
+      font-size: 1.2rem;
+      margin: 10px 0 25px;
+      font-weight: 600;
+    }
+    .modal-content .feedback {
+      font-style: italic;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #0099ff;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .modal-buttons button {
+      cursor: pointer;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      min-width: 120px;
+    }
+    .close-btn {
+      background: #ff4b2b;
+      color: white;
+      box-shadow: 0 4px 12px rgba(255, 75, 43, 0.6);
+    }
+    .close-btn:hover {
+      background: #e63900;
+      box-shadow: 0 6px 16px rgba(230, 57, 0, 0.8);
+    }
+    #downloadPdfBtn {
+      background: #28a745;
+      color: white;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.6);
+    }
+    #downloadPdfBtn:hover {
+      background: #1e7e34;
+      box-shadow: 0 6px 16px rgba(30, 126, 52, 0.8);
+    }
+
+    footer {
+      margin-top: auto;
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+      padding: 15px 10px;
+      color: #555;
+      font-style: italic;
+      font-size: 0.9rem;
+      border-top: 1px solid #a7d7ff;
+      user-select: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      thead th, tbody td {
+        font-size: 0.8rem;
+        padding: 10px 5px;
+      }
+      tbody td input {
+        width: 60px;
+        font-size: 0.9rem;
+        padding: 6px;
+      }
+      .btn {
+        font-size: 1.1rem;
+        padding: 12px 25px;
+      }
+      .modal-content {
+        padding: 20px 15px;
+      }
+      .modal-content h2 {
+        font-size: 1.6rem;
+      }
+      .modal-content p {
+        font-size: 1rem;
+      }
+      .modal-buttons button {
+        min-width: 100px;
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+      header .logo {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <header>
-  MyEduCalc <small>by HALIM-R</small>
-  <button id="toggleTheme" title="Toggle Light/Dark Mode">Dark Mode</button>
+  <div class="logo">MyEduCalc</div>
+  <small>By HALIM-R</small>
 </header>
 
-<table aria-label="Grades input table">
+<table>
   <thead>
     <tr>
       <th>Subject</th>
       <th>Coefficient</th>
       <th>Assignment (40%)</th>
       <th>Exam (60%)</th>
-      <th>Final</th>
+      <th>Final Score</th>
     </tr>
   </thead>
   <tbody id="gradeTable"></tbody>
 </table>
 
-<button class="btn-calc" id="calculateBtn" aria-label="Calculate General Average">Calculate General Average</button>
+<button class="btn" id="calcBtn">Calculate General Average</button>
+
+<!-- Modal for result -->
+<div class="modal" id="resultModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+  <div class="modal-content">
+    <h2 id="modalTitle">Your Results</h2>
+    <p id="resultBox">General Average: -</p>
+    <p class="feedback" id="feedbackText"></p>
+    <div class="modal-buttons">
+      <button class="close-btn" id="closeModalBtn">Close</button>
+      <button id="downloadPdfBtn">Download PDF</button>
+    </div>
+  </div>
+</div>
 
 <footer>
   &copy; 2025 - Developed with 🔥 by HALIM-R
 </footer>
 
-<!-- Modal -->
-<div class="modal-bg" id="modal">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
-    <h2 id="modalTitle">General Average</h2>
-    <div class="result-box" id="resultBox">-</div>
-    <p class="feedback" id="feedbackText">-</p>
-    <button class="close-btn" id="closeModal">Close</button>
-  </div>
-</div>
-
 <script>
+  // Subjects data
   const subjects = [
-    { name: "Written Expression", coef: 2, td: true },
-    { name: "Phonetics", coef: 2, td: true },
-    { name: "Grammar", coef: 2, td: true },
-    { name: "Technique of University Work", coef: 2, td: true },
-    { name: "Civilization", coef: 2, td: true },
-    { name: "Oral Expression", coef: 2, td: true },
-    { name: "Literature", coef: 1, td: true },
-    { name: "Digital Studies", coef: 1, td: false },
-    { name: "Text Studies", coef: 2, td: false },
-    { name: "French", coef: 1, td: false },
+    { name: "Written Expression", coef: 2, hasAssignment: true },
+    { name: "Phonetics", coef: 2, hasAssignment: true },
+    { name: "Grammar", coef: 2, hasAssignment: true },
+    { name: "University Work Techniques", coef: 2, hasAssignment: true },
+    { name: "Civilization", coef: 2, hasAssignment: true },
+    { name: "Oral Expression", coef: 2, hasAssignment: true },
+    { name: "Literature", coef: 1, hasAssignment: true },
+    { name: "Digital Studies", coef: 1, hasAssignment: false },
+    { name: "Text Studies", coef: 2, hasAssignment: false },
+    { name: "French", coef: 1, hasAssignment: false },
   ];
 
   const totalCoef = subjects.reduce((acc, s) => acc + s.coef, 0);
-  const tbody = document.getElementById('gradeTable');
 
   // Build table rows dynamically
   function buildTable() {
-    tbody.innerHTML = '';
+    const tbody = document.getElementById("gradeTable");
+    tbody.innerHTML = "";
     subjects.forEach((s, i) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
         <td>${s.name}</td>
         <td>${s.coef}</td>
-        ${s.td 
-          ? `<td><input type="number" id="td${i}" min="0" max="20" step="0.01" aria-label="${s.name} assignment score" /></td>
-             <td><input type="number" id="exam${i}" min="0" max="20" step="0.01" aria-label="${s.name} exam score" /></td>`
-          : `<td>-</td>
-             <td><input type="number" id="exam${i}" min="0" max="20" step="0.01" aria-label="${s.name} exam score" /></td>`
+        ${
+          s.hasAssignment
+            ? `<td><input type="number" id="assignment${i}" min="0" max="20" step="0.01" placeholder="0-20" /></td>
+               <td><input type="number" id="exam${i}" min="0" max="20" step="0.01" placeholder="0-20" /></td>`
+            : `<td>-</td>
+               <td><input type="number" id="exam${i}" min="0" max="20" step="0.01" placeholder="0-20" /></td>`
         }
-        <td id="final${i}">-</td>
+        <td class="final" id="final${i}">-</td>
       `;
-      tbody.appendChild(row);
+      tbody.appendChild(tr);
     });
   }
 
-  buildTable();
-
-  // Calculate general average and show modal
+  // Calculate results
   function calculate() {
     let total = 0;
+    let validInputs = true;
+
     subjects.forEach((s, i) => {
-      let mark = 0;
-      if(s.td) {
-        const td = parseFloat(document.getElementById(`td${i}`).value) || 0;
-        const exam = parseFloat(document.getElementById(`exam${i}`).value) || 0;
-        mark = td * 0.4 + exam * 0.6;
+      let assignmentScore = 0;
+      let examScore = 0;
+
+      if (s.hasAssignment) {
+        assignmentScore = parseFloat(document.getElementById(`assignment${i}`).value);
+        examScore = parseFloat(document.getElementById(`exam${i}`).value);
+        if (isNaN(assignmentScore) || assignmentScore < 0 || assignmentScore > 20) validInputs = false;
+        if (isNaN(examScore) || examScore < 0 || examScore > 20) validInputs = false;
       } else {
-        const exam = parseFloat(document.getElementById(`exam${i}`).value) || 0;
-        mark = exam;
+        assignmentScore = 0;
+        examScore = parseFloat(document.getElementById(`exam${i}`).value);
+        if (isNaN(examScore) || examScore < 0 || examScore > 20) validInputs = false;
       }
-      total += mark * s.coef;
-      document.getElementById(`final${i}`).textContent = mark.toFixed(2);
-      // Save values in localStorage
-      if(s.td) {
-        localStorage.setItem(`td${i}`, document.getElementById(`td${i}`).value);
-      }
-      localStorage.setItem(`exam${i}`, document.getElementById(`exam${i}`).value);
+
+      let finalScore = s.hasAssignment
+        ? assignmentScore * 0.4 + examScore * 0.6
+        : examScore;
+
+      finalScore = Math.min(Math.max(finalScore, 0), 20); // Clamp between 0 and 20
+      document.getElementById(`final${i}`).textContent = finalScore.toFixed(2);
+
+      total += finalScore * s.coef;
     });
+
+    if (!validInputs) {
+      alert("Please enter valid scores between 0 and 20 for all fields.");
+      return;
+    }
 
     const average = total / totalCoef;
-    const resultBox = document.getElementById('resultBox');
-    const feedbackText = document.getElementById('feedbackText');
+    showModal(average);
+  }
 
-    resultBox.textContent = average.toFixed(2);
+  // Show modal with results and feedback
+  function showModal(average) {
+    const modal = document.getElementById("resultModal");
+    const resultBox = document.getElementById("resultBox");
+    const feedbackText = document.getElementById("feedbackText");
 
-    // Feedback logic
-    if(average >= 15) {
+    resultBox.textContent = `General Average: ${average.toFixed(2)}`;
+
+    if (average >= 15) {
       feedbackText.textContent = "🌟 Excellent, keep it up!";
-      feedbackText.style.color = 'var(--color-success)';
-    } else if(average >= 12) {
+      feedbackText.style.color = "#28a745"; // green
+    } else if (average >= 12) {
       feedbackText.textContent = "👍 Good, but aim higher!";
-      feedbackText.style.color = 'var(--color-primary)';
-    } else if(average >= 10) {
+      feedbackText.style.color = "#007bff"; // blue
+    } else if (average >= 10) {
       feedbackText.textContent = "🟡 Fair, needs work.";
-      feedbackText.style.color = 'var(--color-warning)';
+      feedbackText.style.color = "#ffc107"; // yellow
     } else {
       feedbackText.textContent = "❌ Poor, try harder!";
-      feedbackText.style.color = 'var(--color-danger)';
+      feedbackText.style.color = "#dc3545"; // red
     }
 
-    // Show modal
-    document.getElementById('modal').classList.add('active');
+    modal.classList.add("active");
+    modal.setAttribute("aria-hidden", "false");
   }
 
-  // Load saved values from localStorage on page load
-  function loadSavedGrades() {
-    subjects.forEach((s, i) => {
-      if(s.td) {
-        const tdVal = localStorage.getItem(`td${i}`);
-        if(tdVal !== null) document.getElementById(`td${i}`).value = tdVal;
-      }
-      const examVal = localStorage.getItem(`exam${i}`);
-      if(examVal !== null) document.getElementById(`exam${i}`).value = examVal;
-    });
+  // Close modal handler
+  function closeModal() {
+    const modal = document.getElementById("resultModal");
+    modal.classList.remove("active");
+    modal.setAttribute("aria-hidden", "true");
   }
 
-  // Dark mode toggle
-  const toggleBtn = document.getElementById('toggleTheme');
-  toggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    if(document.body.classList.contains('dark-mode')) {
-      toggleBtn.textContent = 'Light Mode';
-      applyDarkMode();
-    } else {
-      toggleBtn.textContent = 'Dark Mode';
-      applyLightMode();
-    }
-  });
+  // Download PDF functionality
+  function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
-  function applyDarkMode() {
-    document.documentElement.style.setProperty('--color-primary', '#4dabf7');
-    document.documentElement.style.setProperty('--color-primary-light', '#82c7ff');
-    document.documentElement.style.setProperty('--color-bg', '#121212');
-    document.documentElement.style.setProperty('--color-text', '#e0e0e0');
-    document.documentElement.style.setProperty('--color-border', '#333');
-    document.documentElement.style.setProperty('--color-success', '#66bb6a');
-    document.documentElement.style.setProperty('--color-warning', '#ffca28');
-    document.documentElement.style.setProperty('--color-danger', '#ef5350');
-    document.body.style.background = 'var(--color-bg)';
-    document.body.style.color = 'var(--color-text)';
-  }
+    const avgText = document.getElementById("resultBox").textContent;
+    const feedbackText = document.getElementById("feedbackText").textContent;
 
-  function applyLightMode() {
-    document.documentElement.style.setProperty('--color-primary', '#007BFF');
-    document.documentElement.style.setProperty('--color-primary-light', '#66B2FF');
-    document.documentElement.style.setProperty('--color-bg', '#f9fbfd');
-    document.documentElement.style.setProperty('--color-text', '#222');
-    document.documentElement.style.setProperty('--color-border', '#ccc');
-    document.documentElement.style.setProperty('--color-success', '#28a745');
-    document.documentElement.style.setProperty('--color-warning', '#ffc107');
-    document.documentElement.style.setProperty('--color-danger', '#dc3545');
-    document.body.style.background = 'var(--color-bg)';
-    document.body.style.color = 'var(--color-text)';
-  }
-
-  // Close modal button
-  document.getElementById('closeModal').addEventListener('click', () => {
-    document.getElementById('modal').classList.remove('active');
-  });
-
-  // Close modal on outside click
-  document.getElementById('modal').addEventListener('click', e => {
-    if(e.target === document.getElementById('modal')) {
-      document.getElementById('modal').classList.remove('active');
-    }
-  });
-
-  // Calculate button event
-  document.getElementById('calculateBtn').addEventListener('click', calculate);
-
-  // Load saved grades on start
-  window.addEventListener('DOMContentLoaded', () => {
-    loadSavedGrades();
-    applyLightMode(); // Start with light mode
-  });
-
-</script>
-</body>
-</html>
+    doc.setFontSize(22);
+    doc.setTextColor("#007acc");
+    doc.text("MyEduCalc Result", 20, 30);
+    doc.setFontSize(16);
+    doc.setTextColor("#222");
+    doc.text(avgText, 20, 50);
