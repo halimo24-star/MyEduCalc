@@ -1,119 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MyEduCalc - By HALIM-R</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #2c3e50, #3498db);
-      color: #fff;
-    }
-    header {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      text-align: center;
-      font-size: 2.5em;
-      font-weight: bold;
-    }
-    header small {
-      display: block;
-      font-size: 0.6em;
-      color: #ccc;
-      margin-top: 5px;
-    }
-    table {
-      width: 90%;
-      margin: 30px auto;
-      border-collapse: collapse;
-      background-color: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      overflow: hidden;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MyEduCalc - by HALIM-R</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+  :root {
+    --color-primary: #007BFF;
+    --color-primary-light: #66B2FF;
+    --color-bg: #f9fbfd;
+    --color-text: #222;
+    --color-border: #ccc;
+    --color-success: #28a745;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+    --transition: 0.3s ease;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 10px 40px;
+  }
+
+  header {
+    width: 100%;
+    max-width: 900px;
+    padding: 20px 0;
+    text-align: center;
+    font-weight: 700;
+    font-size: 2.4rem;
+    color: var(--color-primary);
+    user-select: none;
+    position: relative;
+  }
+
+  header small {
+    display: block;
+    font-weight: 400;
+    font-size: 1rem;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  /* Toggle Button */
+  #toggleTheme {
+    position: absolute;
+    right: 20px;
+    top: 25px;
+    background: var(--color-primary);
+    border: none;
+    padding: 6px 14px;
+    color: white;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background var(--transition);
+    user-select: none;
+  }
+  #toggleTheme:hover {
+    background: var(--color-primary-light);
+  }
+
+  /* Table Styling */
+  table {
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+  }
+  thead {
+    background: var(--color-primary);
+    color: white;
+  }
+  th, td {
+    padding: 14px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--color-border);
+    font-weight: 500;
+  }
+  th {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  input[type=number] {
+    width: 80px;
+    padding: 8px 6px;
+    font-size: 1rem;
+    text-align: center;
+    border-radius: 6px;
+    border: 1.8px solid var(--color-border);
+    transition: border-color var(--transition);
+  }
+  input[type=number]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+
+  /* Calculate Button */
+  .btn-calc {
+    margin: 30px auto 0;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: background var(--transition), transform var(--transition);
+    display: block;
+    user-select: none;
+  }
+  .btn-calc:hover {
+    background: var(--color-primary-light);
+    transform: scale(1.05);
+  }
+
+  /* Modal styles */
+  .modal-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+  }
+  .modal-bg.active {
+    display: flex;
+  }
+  .modal {
+    background: white;
+    max-width: 400px;
+    width: 90%;
+    padding: 30px 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgb(0 0 0 / 0.15);
+    text-align: center;
+  }
+  .modal h2 {
+    margin: 0 0 10px;
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 1.8rem;
+  }
+  .modal p {
+    font-size: 1.15rem;
+    margin: 12px 0 20px;
+  }
+  .modal .result-box {
+    font-size: 2.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .modal .feedback {
+    font-size: 1.2rem;
+    font-style: italic;
+  }
+  .modal button.close-btn {
+    background: var(--color-primary);
+    border: none;
+    padding: 10px 30px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition);
+  }
+  .modal button.close-btn:hover {
+    background: var(--color-primary-light);
+  }
+
+  /* Footer */
+  footer {
+    margin-top: auto;
+    width: 100%;
+    max-width: 900px;
+    padding: 12px 10px;
+    text-align: center;
+    color: #555;
+    font-style: italic;
+    font-size: 0.9rem;
+    user-select: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 520px) {
     th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 0.8rem;
+      padding: 10px 5px;
     }
-    th {
-      background-color: rgba(0, 0, 0, 0.4);
-      text-transform: uppercase;
+    input[type=number] {
+      width: 60px;
+      font-size: 0.9rem;
+      padding: 6px 4px;
     }
-    input {
-      width: 80px;
-      padding: 6px;
-      border-radius: 6px;
-      border: none;
-      background: #222;
-      color: #0ff;
-      text-align: center;
+    .btn-calc {
+      font-size: 1rem;
+      padding: 12px 28px;
     }
-    .btn {
-      display: block;
-      margin: 20px auto;
-      padding: 15px 30px;
-      font-size: 1.2em;
-      border-radius: 8px;
-      border: none;
-      background: linear-gradient(to right, #00c6ff, #0072ff);
-      color: white;
-      cursor: pointer;
-      transition: 0.3s ease;
-    }
-    .btn:hover {
-      transform: scale(1.05);
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-style: italic;
-      color: #bbb;
-      font-size: 0.9em;
-    }
-    /* Modal styles */
     .modal {
-      display: none;
-      position: fixed;
-      z-index: 999;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      align-items: center;
-      justify-content: center;
+      padding: 20px 15px;
     }
-    .modal-content {
-      background: #1c1f26;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-      color: #fff;
-      max-width: 400px;
-      width: 90%;
+    .modal h2 {
+      font-size: 1.5rem;
     }
-    .close {
-      position: absolute;
-      top: 15px; right: 20px;
-      font-size: 1.5em;
-      color: #fff;
-      cursor: pointer;
+    .modal .result-box {
+      font-size: 1.8rem;
     }
-  </style>
+  }
+</style>
 </head>
 <body>
 
 <header>
-  MyEduCalc
-  <small>By HALIM-R</small>
+  MyEduCalc <small>by HALIM-R</small>
+  <button id="toggleTheme" title="Toggle Light/Dark Mode">Dark Mode</button>
 </header>
 
-<table>
+<table aria-label="Grades input table">
   <thead>
     <tr>
       <th>Subject</th>
-      <th>Coef</th>
-      <th>TD (40%)</th>
+      <th>Coefficient</th>
+      <th>Assignment (40%)</th>
       <th>Exam (60%)</th>
       <th>Final</th>
     </tr>
@@ -121,20 +255,21 @@
   <tbody id="gradeTable"></tbody>
 </table>
 
-<button class="btn" onclick="calculate()">Calculate General Average</button>
-
-<!-- Modal -->
-<div id="resultModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>General Average: <span id="modalAvg">-</span></h2>
-    <p id="modalFeedback"></p>
-  </div>
-</div>
+<button class="btn-calc" id="calculateBtn" aria-label="Calculate General Average">Calculate General Average</button>
 
 <footer>
-  &copy; 2025 - Made with 🔥 by HALIM-R
+  &copy; 2025 - Developed with 🔥 by HALIM-R
 </footer>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <h2 id="modalTitle">General Average</h2>
+    <div class="result-box" id="resultBox">-</div>
+    <p class="feedback" id="feedbackText">-</p>
+    <button class="close-btn" id="closeModal">Close</button>
+  </div>
+</div>
 
 <script>
   const subjects = [
@@ -150,32 +285,37 @@
     { name: "French", coef: 1, td: false },
   ];
 
+  const totalCoef = subjects.reduce((acc, s) => acc + s.coef, 0);
+  const tbody = document.getElementById('gradeTable');
+
+  // Build table rows dynamically
   function buildTable() {
-    const tbody = document.getElementById("gradeTable");
+    tbody.innerHTML = '';
     subjects.forEach((s, i) => {
-      const row = document.createElement("tr");
+      const row = document.createElement('tr');
       row.innerHTML = `
         <td>${s.name}</td>
         <td>${s.coef}</td>
-        ${s.td ? `
-          <td><input type="number" id="td${i}" min="0" max="20" step="0.01" /></td>
-          <td><input type="number" id="exam${i}" min="0" max="20" step="0.01" /></td>
-        ` : `
-          <td>-</td>
-          <td><input type="number" id="exam${i}" min="0" max="20" step="0.01" /></td>
-        `}
+        ${s.td 
+          ? `<td><input type="number" id="td${i}" min="0" max="20" step="0.01" aria-label="${s.name} assignment score" /></td>
+             <td><input type="number" id="exam${i}" min="0" max="20" step="0.01" aria-label="${s.name} exam score" /></td>`
+          : `<td>-</td>
+             <td><input type="number" id="exam${i}" min="0" max="20" step="0.01" aria-label="${s.name} exam score" /></td>`
+        }
         <td id="final${i}">-</td>
       `;
       tbody.appendChild(row);
     });
   }
 
+  buildTable();
+
+  // Calculate general average and show modal
   function calculate() {
     let total = 0;
-    const totalCoef = 17;
     subjects.forEach((s, i) => {
       let mark = 0;
-      if (s.td) {
+      if(s.td) {
         const td = parseFloat(document.getElementById(`td${i}`).value) || 0;
         const exam = parseFloat(document.getElementById(`exam${i}`).value) || 0;
         mark = td * 0.4 + exam * 0.6;
@@ -184,33 +324,111 @@
         mark = exam;
       }
       total += mark * s.coef;
-      document.getElementById(`final${i}`).innerText = mark.toFixed(2);
+      document.getElementById(`final${i}`).textContent = mark.toFixed(2);
+      // Save values in localStorage
+      if(s.td) {
+        localStorage.setItem(`td${i}`, document.getElementById(`td${i}`).value);
+      }
+      localStorage.setItem(`exam${i}`, document.getElementById(`exam${i}`).value);
     });
+
     const average = total / totalCoef;
-    document.getElementById("modalAvg").innerText = average.toFixed(2);
-    giveFeedback(average);
-    document.getElementById("resultModal").style.display = "flex";
-  }
+    const resultBox = document.getElementById('resultBox');
+    const feedbackText = document.getElementById('feedbackText');
 
-  function giveFeedback(avg) {
-    const feedback = document.getElementById("modalFeedback");
-    if (avg >= 15) {
-      feedback.innerText = "🌟 Excellent, keep it up!";
-    } else if (avg >= 12) {
-      feedback.innerText = "👍 Good, aim for more!";
-    } else if (avg >= 10) {
-      feedback.innerText = "🟡 Fair, needs improvement.";
+    resultBox.textContent = average.toFixed(2);
+
+    // Feedback logic
+    if(average >= 15) {
+      feedbackText.textContent = "🌟 Excellent, keep it up!";
+      feedbackText.style.color = 'var(--color-success)';
+    } else if(average >= 12) {
+      feedbackText.textContent = "👍 Good, but aim higher!";
+      feedbackText.style.color = 'var(--color-primary)';
+    } else if(average >= 10) {
+      feedbackText.textContent = "🟡 Fair, needs work.";
+      feedbackText.style.color = 'var(--color-warning)';
     } else {
-      feedback.innerText = "❌ Poor, try harder!";
+      feedbackText.textContent = "❌ Poor, try harder!";
+      feedbackText.style.color = 'var(--color-danger)';
     }
+
+    // Show modal
+    document.getElementById('modal').classList.add('active');
   }
 
-  function closeModal() {
-    document.getElementById("resultModal").style.display = "none";
+  // Load saved values from localStorage on page load
+  function loadSavedGrades() {
+    subjects.forEach((s, i) => {
+      if(s.td) {
+        const tdVal = localStorage.getItem(`td${i}`);
+        if(tdVal !== null) document.getElementById(`td${i}`).value = tdVal;
+      }
+      const examVal = localStorage.getItem(`exam${i}`);
+      if(examVal !== null) document.getElementById(`exam${i}`).value = examVal;
+    });
   }
 
-  buildTable();
+  // Dark mode toggle
+  const toggleBtn = document.getElementById('toggleTheme');
+  toggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    if(document.body.classList.contains('dark-mode')) {
+      toggleBtn.textContent = 'Light Mode';
+      applyDarkMode();
+    } else {
+      toggleBtn.textContent = 'Dark Mode';
+      applyLightMode();
+    }
+  });
+
+  function applyDarkMode() {
+    document.documentElement.style.setProperty('--color-primary', '#4dabf7');
+    document.documentElement.style.setProperty('--color-primary-light', '#82c7ff');
+    document.documentElement.style.setProperty('--color-bg', '#121212');
+    document.documentElement.style.setProperty('--color-text', '#e0e0e0');
+    document.documentElement.style.setProperty('--color-border', '#333');
+    document.documentElement.style.setProperty('--color-success', '#66bb6a');
+    document.documentElement.style.setProperty('--color-warning', '#ffca28');
+    document.documentElement.style.setProperty('--color-danger', '#ef5350');
+    document.body.style.background = 'var(--color-bg)';
+    document.body.style.color = 'var(--color-text)';
+  }
+
+  function applyLightMode() {
+    document.documentElement.style.setProperty('--color-primary', '#007BFF');
+    document.documentElement.style.setProperty('--color-primary-light', '#66B2FF');
+    document.documentElement.style.setProperty('--color-bg', '#f9fbfd');
+    document.documentElement.style.setProperty('--color-text', '#222');
+    document.documentElement.style.setProperty('--color-border', '#ccc');
+    document.documentElement.style.setProperty('--color-success', '#28a745');
+    document.documentElement.style.setProperty('--color-warning', '#ffc107');
+    document.documentElement.style.setProperty('--color-danger', '#dc3545');
+    document.body.style.background = 'var(--color-bg)';
+    document.body.style.color = 'var(--color-text)';
+  }
+
+  // Close modal button
+  document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('modal').classList.remove('active');
+  });
+
+  // Close modal on outside click
+  document.getElementById('modal').addEventListener('click', e => {
+    if(e.target === document.getElementById('modal')) {
+      document.getElementById('modal').classList.remove('active');
+    }
+  });
+
+  // Calculate button event
+  document.getElementById('calculateBtn').addEventListener('click', calculate);
+
+  // Load saved grades on start
+  window.addEventListener('DOMContentLoaded', () => {
+    loadSavedGrades();
+    applyLightMode(); // Start with light mode
+  });
+
 </script>
-
 </body>
 </html>
